@@ -43,7 +43,7 @@ jobs:
         run: |
           echo "Creating infrastructure with Terraform..."
           cd terraform/foundational
-          terraform init
+          terraform init -reconfigure
           terraform plan -var-file="values.tfvars"
           terraform apply -auto-approve -var-file="values.tfvars"
 
