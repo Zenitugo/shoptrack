@@ -1,0 +1,17 @@
+environment_name                 = "staging"
+vpc_cidr_block                   = "10.0.0.0/16"
+region                           = "eu-north-1"
+image_id                         = "ami-051eaec1417c5d4ae" # Ubuntu AMI (HVM), SSD Volume Type
+instance_type                    = "t3.medium"
+min_size                         = 1
+max_size                         = 4
+desired_capacity                 = 2
+Instance_profile_name            = "shoptrack-instance-profile"
+role_name                        = "shoptrack-role"
+custom_policy_name               = "shoptrack-policy"
+bucket_prefix                    = "shoptrack-media"
+cloudfront_oac_name              = "shoptrackfrontend-oac"
+cpu_high_threshold               = 70
+cpu_low_threshold                = 30
+project_name                     = "shoptrack"
+db_username                      = "shoptrack_user"
