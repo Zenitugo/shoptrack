@@ -1,4 +1,4 @@
-name: Deploy FitTrack App
+name: Deploy ShopTrack App
 
 on:
   push:
