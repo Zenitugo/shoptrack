@@ -1,6 +1,6 @@
 environment_name                 = "staging"
 vpc_cidr_block                   = "10.0.0.0/16"
-region                           = "eu-north-1"
+region                           = "eu-central-1"
 image_id                         = "ami-051eaec1417c5d4ae" # Ubuntu AMI (HVM), SSD Volume Type
 instance_type                    = "t3.medium"
 min_size                         = 1
