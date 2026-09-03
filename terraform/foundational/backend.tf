@@ -1,6 +1,6 @@
 terraform {
     backend "s3" { 
-        bucket = "ugochi-shoptrack-buck1"
+        bucket = "ugochi-shoptrack-buck"
         key     = "shoptrack/terraform.tfstate"
         dynamodb_table = "ugochi-shoptrack-lock"
         region = "eu-central-1"
