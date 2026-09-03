@@ -1,0 +1,226 @@
+name: Deploy FitTrack App
+
+on:
+  push:
+    branches:
+      - master
+
+ # ============================================================
+  # JOB 1: CREATE FOUNDATIONAL INFRASTRUCTURE FOR THE PROJECT
+  # ============================================================
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs: 
+      backend_repo_name: ${{ steps.ecr-uris.outputs.backend_repo_name }} 
+      frontend_bucket_name: ${{ steps.frontend-bucket.outputs.frontend_bucket_name }}
+      alb_dns_name: ${{ steps.terraform-outputs.outputs.alb_dns_name }}
+            
+    steps:
+
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-central-1"
+      
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Mask AWS Account ID
+        run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
+
+      # Create infrastructure
+      - name: Creating infrastructure with Terraform
+        run: |
+          echo "Creating infrastructure with Terraform..."
+          cd terraform/foundational
+          terraform init
+          terraform plan -var-file="values.tfvars"
+          terraform apply -auto-approve -var-file="values.tfvars"
+
+      # Retrieve the ECR repository name  from Terraform output
+      - name: Retrieve ECR repository URI
+        id: ecr-uris
+        run: |
+          cd terraform/foundational
+          BACKEND_URI=$(terraform output -raw backend_repository_url)
+          REPO_NAME=$(basename "$BACKEND_URI")
+          echo "Repository Name: $REPO_NAME"
+          echo "backend_repo_name=$REPO_NAME" >> "$GITHUB_OUTPUT"
+        # echo "backend_uri=$BACKEND_URI" >> $GITHUB_OUTPUT
+
+
+      - name: Retrieve Frontend Bucket Name
+        id: frontend-bucket
+        run: |
+          cd terraform/foundational
+
+          FRONTEND_BUCKET_NAME=$(terraform output -raw frontend_bucket_name)
+
+          echo "frontend_bucket_name=$FRONTEND_BUCKET_NAME" >> "$GITHUB_OUTPUT"
+
+          echo "Frontend Bucket Name: $FRONTEND_BUCKET_NAME"
+                         
+      - name: Retrieve Terraform Outputs
+        id: terraform-outputs
+        run: |
+          cd terraform/foundational
+
+          ALB_DNS=$(terraform output -raw alb_dns_name)
+
+          echo "alb_dns_name=$ALB_DNS" >> "$GITHUB_OUTPUT"
+
+          echo "ALB DNS: $ALB_DNS"
+
+
+
+      - name: Verify step output
+        run: |
+          echo "Step output = '${{ steps.ecr-uris.outputs.backend_repo_name }}'"
+
+
+        
+  # ===========================================================
+  # JOB 2 — BUILD AND PUSH PYTHON BACKEND
+  # ============================================================
+  deploy-backend-to-ec2:
+    name: Deploy backend to ec2
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    env:
+      ECR_BACKEND_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com/${{ needs.deploy.outputs.backend_repo_name }}
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-central-1"
+
+      - name: Mask AWS Account ID
+        run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
+
+      # Login to AWS ECR
+      - name: Login to AWS ECR
+        run: |
+          aws ecr get-login-password --region eu-central-1 | \
+          docker login --username AWS --password-stdin \
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com
+          
+      - name: Verify job output
+        run: |
+          echo "Job output = '${{ needs.deploy.outputs.backend_repo_name }}'"
+          
+     # Build and Push Python Backend
+      - name: Build and push backend
+        run: |
+          docker build -t shoptrack-backend project/backend
+          docker tag project-backend:latest $ECR_BACKEND_URI:latest
+          docker push $ECR_BACKEND_URI:latest
+          echo "✅ Successfully pushed: $ECR_BACKEND_URI:latest"
+
+
+
+
+  # ============================================================
+  # JOB 3 — UPLOAD FRONTEND BUILD ARTIFACTS TO S3 BUCKET 
+  # ============================================================
+  deploy-frontend-build-artifacts-to-s3:
+    name: Deploy frontend build artifacts to s3
+    needs: 
+      - deploy
+    runs-on: ubuntu-latest
+    env:
+      ALB_DNS_NAME: ${{ needs.create_compute_infra.outputs.alb_dns_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-central-1"
+
+      - name: Mask AWS Account ID
+        run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ./project/frontend/package-lock.json
+
+
+      - name: Set API URL
+        run: |
+          echo "VITE_API_URL=http://${{env.ALB_DNS_NAME}}" >> "$GITHUB_ENV"
+                    
+
+      - name: Install dependencies and build frontend
+        run: |
+          cd project/frontend
+          npm ci
+          npm run build
+        env:
+          VITE_API_URL: ${{ env.VITE_API_URL }}
+          
+      - name: Sync build to S3 bucket
+        run: |
+          aws s3 sync project/frontend/dist s3://${{ needs.deploy.outputs.frontend_bucket_name }} --delete
+
+
+
+  # ============================================================
+  # JOB 4 —  CREATE COMPUTE INFRASTRUCTURE
+  # ============================================================  
+  create_compute_infra:
+    runs-on: ubuntu-latest     
+    needs: 
+      - deploy-backend-to-ec2   
+      - deploy-frontend-build-artifacts-to-s3
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-central-1"
+      
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Mask AWS Account ID
+        run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
+
+
+      # Create infrastructure
+      - name: Creating compute infrastructure with Terraform
+        run: |
+          echo "Creating infrastructure with Terraform..."
+          cd terraform/compute
+          terraform init
+          terraform plan -var-file="values.tfvars"
+          terraform apply -auto-approve -var-file="values.tfvars"
