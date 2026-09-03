@@ -1,8 +1,8 @@
 terraform {
     backend "s3" { 
-        bucket = "ugochi-project1-buck"
+        bucket = "ugochi-shoptrack-buck"
         key     = "fitness-app/compute.tfstate"
-        dynamodb_table = "ugochi-fitness-app-lock"
+        dynamodb_table = "ugochi-shoptrack-lock"
         region = "eu-central-1"
         encrypt = true
         use_lockfile = false
