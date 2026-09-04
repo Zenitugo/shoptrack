@@ -10,7 +10,6 @@ Instance_profile_name            = "shoptrack-instance-profile"
 role_name                        = "shoptrack-role"
 custom_policy_name               = "shoptrack-policy"
 bucket_prefix                    = "shoptrack-media"
-cloudfront_oac_name              = "shoptrackfrontend-oac"
 cpu_high_threshold               = 70
 cpu_low_threshold                = 30
 project_name                     = "shoptrack"

@@ -10,7 +10,6 @@ variable "Instance_profile_name" {}
 variable "role_name" {}
 variable "custom_policy_name" {}
 variable "bucket_prefix" {}
-variable "cloudfront_oac_name" {}
 variable "db_username" {}
 variable "project_name" {}
 variable "cpu_high_threshold" {}
