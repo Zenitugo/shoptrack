@@ -128,7 +128,7 @@ jobs:
       - name: Build and push backend
         run: |
           docker build -t shoptrack-backend project/backend
-          docker tag project-backend:latest $ECR_BACKEND_URI:latest
+          docker tag shoptrack-backend:latest $ECR_BACKEND_URI:latest
           docker push $ECR_BACKEND_URI:latest
           echo "✅ Successfully pushed: $ECR_BACKEND_URI:latest"
 
