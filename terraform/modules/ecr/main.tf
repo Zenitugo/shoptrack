@@ -1,7 +1,7 @@
 ############################ ECR Repository Template #########################
 
 resource "aws_ecr_repository" "backend_repository" {
-    name = "${var.environment_name}-backend-repo"
+    name = "${var.project_name}-backend"
     image_tag_mutability = "MUTABLE"
     force_delete = true
     
