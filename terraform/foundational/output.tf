@@ -4,6 +4,11 @@ output "backend_repository_url" {
     value = module.ecr.backend_repository_url
 }
 
+
+########################## Export Backend Repo Name ##########################
+output "backend_repo_name" {
+  value = module.ecr.backend_repo_name
+}
 ###################### Export the Bucket Name holding the Frontend Assets ##################
 output "frontend_bucket_name" {
   value = module.s3.frontend_bucket_name
