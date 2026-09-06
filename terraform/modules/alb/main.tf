@@ -1,5 +1,5 @@
 ############### Creation of application load balancer ###############
-resource "aws_lb" "sshoptrack_load_balancer" {
+resource "aws_lb" "shoptrack_load_balancer" {
     name = "${var.environment_name}-shoptrack-app-alb"
     internal = false
     security_groups = [var.alb_sg]
