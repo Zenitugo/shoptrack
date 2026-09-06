@@ -15,7 +15,7 @@ module "sg" {
 
 module "ecr" {
   source                              = "../modules/ecr"
-  environment_name                    = var.environment_name
+  project_name                        = var.project_name 
 }
 
 module "iam" {
