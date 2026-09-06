@@ -1,6 +1,6 @@
 ############### Creation of application load balancer ###############
-resource "aws_lb" "fittrack_load_balancer" {
-    name = "${var.environment_name}-fittrack-app-alb"
+resource "aws_lb" "sshoptrack_load_balancer" {
+    name = "${var.environment_name}-shoptrack-app-alb"
     internal = false
     security_groups = [var.alb_sg]
     subnets = [var.public_subnet_1_id, var.public_subnet_2_id]
@@ -11,8 +11,8 @@ resource "aws_lb" "fittrack_load_balancer" {
 
 
 ################## Create a Target Group for the ALB ######################
-resource "aws_lb_target_group" "fittrack_app_target_group" {
-    name = "${var.environment_name}-fittrack-app-tg"
+resource "aws_lb_target_group" "shoptrack_app_target_group" {
+    name = "${var.environment_name}-shoptrack-app-tg"
     port = 80
     protocol = "HTTP"
     vpc_id = var.vpc_id
@@ -31,12 +31,12 @@ resource "aws_lb_target_group" "fittrack_app_target_group" {
 
 
 ###################### Create a Listener for the ALB ######################
-resource "aws_lb_listener" "fittrack_app_listener" {
-    load_balancer_arn = aws_lb.fittrack_load_balancer.arn
+resource "aws_lb_listener" "shoptrack_app_listener" {
+    load_balancer_arn = aws_lb.shoptrack_load_balancer.arn
     port = 80
     protocol = "HTTP"
     default_action {
         type = "forward"
-        target_group_arn = aws_lb_target_group.fittrack_app_target_group.arn
+        target_group_arn = aws_lb_target_group.shoptrack_app_target_group.arn
     }
 }
