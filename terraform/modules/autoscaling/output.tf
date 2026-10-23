@@ -1,6 +1,6 @@
 ############## Export IDs of the Auto Scaling Group ##################
 output "autoscaling_group_id" {
-    value = aws_autoscaling_group.fitness_app_autoscaling_group.id
+    value = aws_autoscaling_group.shoptrack_autoscaling_group.id
     }
 
 output "scale_up_policy_arn" {
@@ -12,5 +12,5 @@ output "scale_down_policy_arn" {
     }
 
 output "autoscaling_group_name" {
-    value = aws_autoscaling_group.fitness_app_autoscaling_group.name
+    value = aws_autoscaling_group.shoptrack_autoscaling_group.name
     }

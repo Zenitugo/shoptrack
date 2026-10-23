@@ -1,5 +1,5 @@
 #######################  Launch an Instance Template #######################
-resource "aws_launch_template" "fitness_app_launch_template" {
+resource "aws_launch_template" "shoptrack_app_launch_template" {
   name_prefix   = "${var.environment_name}-fitness-app"
   image_id           = var.image_id
   instance_type = var.instance_type

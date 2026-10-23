@@ -1,6 +1,6 @@
 
 ##########################  Auto Scaling Group Configuration #########################
-resource "aws_autoscaling_group" "fitness_app_autoscaling_group" {
+resource "aws_autoscaling_group" "shoptrack_autoscaling_group" {
   name                      = "${var.environment_name}-fitness-app-asg"
   max_size                  = var.max_size
   min_size                  = var.min_size
@@ -31,7 +31,7 @@ resource "aws_autoscaling_group" "fitness_app_autoscaling_group" {
 # Policy to add 1 instance when triggered
 resource "aws_autoscaling_policy" "scale_up_policy" {
   name                   = "cpu-scale-up-policy"
-  autoscaling_group_name = aws_autoscaling_group.fitness_app_autoscaling_group.name
+  autoscaling_group_name = aws_autoscaling_group.shoptrack_autoscaling_group.name
   policy_type            = "StepScaling"
   adjustment_type        = "ChangeInCapacity"
 
@@ -47,7 +47,7 @@ resource "aws_autoscaling_policy" "scale_up_policy" {
 # Policy to remove 1 instance when triggered
 resource "aws_autoscaling_policy" "scale_down_policy" {
   name                   = "cpu-scale-down-policy"
-  autoscaling_group_name = aws_autoscaling_group.fitness_app_autoscaling_group.name
+  autoscaling_group_name = aws_autoscaling_group.shoptrack_autoscaling_group.name
   policy_type            = "StepScaling"
   adjustment_type        = "ChangeInCapacity"
 
