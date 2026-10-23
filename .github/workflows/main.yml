@@ -170,7 +170,7 @@ jobs:
 
       - name: Set API URL
         run: |
-          echo "VITE_API_URL=http://${{env.ALB_DNS_NAME}}" >> "$GITHUB_ENV"
+          echo "VITE_API_URL=/api" >> "$GITHUB_ENV"
                     
 
       - name: Install dependencies and build frontend
