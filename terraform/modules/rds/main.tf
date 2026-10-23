@@ -16,6 +16,13 @@ resource "aws_db_instance" "shoptrack_rds" {
   vpc_security_group_ids   = [var.database_sg]
   publicly_accessible      = false
   multi_az                 = true
-  skip_final_snapshot      = true
+  skip_final_snapshot      = false
   manage_master_user_password = true
+  storage_encrypted           = true
+  backup_retention_period     = 7
+  backup_window               = "03:00-04:00"
+  copy_tags_to_snapshot       = true
+
+  deletion_protection         = false   # set true once you stop tearing it down
+  final_snapshot_identifier   = "${var.project_name}-final-snapshot"
 }
