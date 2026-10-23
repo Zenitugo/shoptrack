@@ -6,7 +6,7 @@ set -euxo pipefail
 
 REGION="eu-central-1"
 ENVIRONMENT="staging"
-APP_NAME="fittrack"
+APP_NAME="shoptrack"
 
 #########################################
 # Update system
@@ -158,14 +158,14 @@ aws s3 sync "s3://$FRONTEND_BUCKET/" /var/www/html/ --delete
 aws ecr get-login-password --region $REGION | \
   docker login --username AWS --password-stdin $ECR_REGISTRY
 
-docker stop fittrack-backend || true
-docker rm fittrack-backend || true
+docker stop shoptrack-backend || true
+docker rm shoptrack-backend || true
 
 
 docker pull "$ECR_REGISTRY/$REPO_NAME:latest"
 
 docker run -d \
-  --name fittrack-backend \
+  --name shoptrack-backend \
   --restart always \
   -p 8000:8000 \
   -e DB_HOST=$DB_HOST \
