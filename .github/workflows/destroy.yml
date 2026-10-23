@@ -1,4 +1,4 @@
-name: Destroy Fittrack Infrastructure
+name: Destroy Shoptrack Infrastructure
 
 on:
   workflow_dispatch: # Manual trigger 
