@@ -44,21 +44,6 @@ data "aws_iam_policy_document" "ec2_permissions" {
     ]
   }
 
-  
-# S3: Upload and retrieve workout media
-  statement {
-    sid    = "S3MediaAccess"
-    effect = "Allow"
-    actions = [
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket"
-    ]
-    resources = [
-      var.bucket_arn, # Bucket ARN from S3 module output
-      "${var.bucket_arn}/*",
-    ]
-  }
 
 # Secrets Manager: Read database password
   statement {
