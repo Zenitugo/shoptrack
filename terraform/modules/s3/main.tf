@@ -1,12 +1,12 @@
 ############################## Create s3 Bucket for storing media photos ##############################
 
-  # Media Bucket (Fully Public)
-resource "aws_s3_bucket" "media_bucket" {
+  # databas Bucket (Fully Public)
+resource "aws_s3_bucket" "shoptrack_bucket" {
   bucket_prefix = var.bucket_prefix
 }
 
-resource "aws_s3_bucket_public_access_block" "media_bucket_privacy" {
-  bucket = aws_s3_bucket.media_bucket.id
+resource "aws_s3_bucket_public_access_block" "shoptrack_bucket_privacy" {
+  bucket = aws_s3_bucket.shoptrack_bucket.id
 
   block_public_acls       = false
   block_public_policy     = false

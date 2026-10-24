@@ -1,11 +1,11 @@
 #################### Export IDs ############################
 
 output "bucket_arn" {
-  value = aws_s3_bucket.media_bucket.arn
+  value = aws_s3_bucket.shoptrack_bucket.arn
 }
 
 output "bucket_name" {
-  value = aws_s3_bucket.media_bucket.id
+  value = aws_s3_bucket.shoptrack_bucket.id
 }
 
 
@@ -22,6 +22,6 @@ output "frontend_bucket_arn" {
 }
 
 
-output "media_bucket_id" {
-  value = aws_s3_bucket.media_bucket.id
+output "shoptrack_bucket_id" {
+  value = aws_s3_bucket.shoptrack_bucket.id
 }
