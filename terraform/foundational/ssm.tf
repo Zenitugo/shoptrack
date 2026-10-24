@@ -22,10 +22,10 @@ resource "aws_ssm_parameter" "db_secret_arn" {
   }
 }
 
-resource "aws_ssm_parameter" "media_bucket" {
-  name        = "/${var.project_name}/${var.environment_name}/media_bucket"
+resource "aws_ssm_parameter" "shoptrack_bucket" {
+  name        = "/${var.project_name}/${var.environment_name}/shoptrack_bucket"
   type        = "String"
-  value       = module.s3.media_bucket_id
+  value       = module.s3.shoptrack_bucket_id
 
 
   tags = {
