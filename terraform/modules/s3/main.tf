@@ -1,26 +1,4 @@
-############################## Create s3 Bucket for storing media photos ##############################
 
-  # databas Bucket (Fully Public)
-resource "aws_s3_bucket" "shoptrack_bucket" {
-  bucket_prefix = var.bucket_prefix
-}
-
-resource "aws_s3_bucket_public_access_block" "shoptrack_bucket_privacy" {
-  bucket = aws_s3_bucket.shoptrack_bucket.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-# NOTE:
-# This bucket is intentionally public for this portfolio project
-# so uploaded images can be accessed directly.
-#
-# In a production environment, the recommended approach is to keep
-# the bucket private and have the backend generate pre-signed URLs
-# (or serve the content through CloudFront) for secure access.
 
 ########################## Create S3 Bucket for Frontend Hosting (Public) ##########################
 # Frontend Bucket

@@ -23,11 +23,9 @@ module "iam" {
   Instance_profile_name               = var.Instance_profile_name
   role_name                           = var.role_name
   custom_policy_name                  = var.custom_policy_name
-  bucket_arn                          = module.s3.bucket_arn
   frontend_bucket_arn                 = module.s3.frontend_bucket_arn
   frontend_bucket_name                = module.s3.frontend_bucket_name
   db_secret_arn                       = module.rds.db_secret_arn
-  bucket_name                         = module.s3.bucket_name 
 }
 
 

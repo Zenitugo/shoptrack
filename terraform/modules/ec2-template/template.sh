@@ -138,7 +138,6 @@ sudo systemctl enable nginx
 ######################################################
 DB_HOST=$(aws ssm get-parameter --name "/$APP_NAME/$ENVIRONMENT/db_host" --query "Parameter.Value" --output text --region $REGION)
 DB_SECRET_ARN=$(aws ssm get-parameter --name "/$APP_NAME/$ENVIRONMENT/db_secret_arn" --with-decryption --query "Parameter.Value" --output text --region $REGION)
-MEDIA_BUCKET=$(aws ssm get-parameter --name "/$APP_NAME/$ENVIRONMENT/media_bucket" --query "Parameter.Value" --output text --region $REGION)
 ECR_REGISTRY=$(aws ssm get-parameter --name "/$APP_NAME/$ENVIRONMENT/ecr_registry" --query "Parameter.Value" --output text --region $REGION)
 REPO_NAME=$(aws ssm get-parameter --name "/$APP_NAME/$ENVIRONMENT/backend_repo_name" --query "Parameter.Value" --output text --region $REGION)
 FRONTEND_BUCKET=$(aws ssm get-parameter --name "/$APP_NAME/$ENVIRONMENT/frontend_bucket" --query "Parameter.Value" --output text --region $REGION)
@@ -170,7 +169,6 @@ docker run -d \
   -p 8000:8000 \
   -e DB_HOST=$DB_HOST \
   -e DB_SECRET_ARN=$DB_SECRET_ARN \
-  -e S3_BUCKET_NAME=$MEDIA_BUCKET \
   -e DB_PORT=5432 \
   -e DB_NAME=$APP_NAME \
   -e AWS_REGION=$REGION \

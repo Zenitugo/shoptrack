@@ -22,16 +22,6 @@ resource "aws_ssm_parameter" "db_secret_arn" {
   }
 }
 
-resource "aws_ssm_parameter" "shoptrack_bucket" {
-  name        = "/${var.project_name}/${var.environment_name}/shoptrack_bucket"
-  type        = "String"
-  value       = module.s3.shoptrack_bucket_id
-
-
-  tags = {
-    Environment = var.environment_name
-  }
-}
 
 resource "aws_ssm_parameter" "frontend_bucket" {
   name        = "/${var.project_name}/${var.environment_name}/frontend_bucket"
