@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
  # ============================================================
   # JOB 1: CREATE FOUNDATIONAL INFRASTRUCTURE FOR THE PROJECT
